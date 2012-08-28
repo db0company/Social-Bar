@@ -9,6 +9,8 @@ open Eliom_content
 open Html5.D
 open Eliom_parameter
 
-let create url =
+let create ~url:url () =
   div
-    [Facebook.button url]
+    [Facebook.button url;
+     Twitter.button
+       ()]

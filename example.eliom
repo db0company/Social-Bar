@@ -29,13 +29,15 @@ let _ =
   Example_app.register
     ~service:main_service
     (fun () () ->
-      let url = "http://ocsigen.org/" in
+      let url = "http://ocsigen.org/"
+      and twitter_account = "ocsigen" in
       Lwt.return
         (html
 	   (head (title (pcdata "Ocsigen Social Bar Module"))
 	      [css_link ~uri:css_uri ()])
            (body [
-	     h1 ~a:[a_style "text-align:center;"] [pcdata "Ocsigen Social Bar Module"];
+	     h1 ~a:[a_style "text-align:center;"]
+	       [pcdata "Ocsigen Social Bar Module"];
 
 	     div ~a:[a_class ["row-fluid"]]
 	       [
@@ -53,10 +55,8 @@ let _ =
 		       ~font:Facebook.Verdana
 		       url;
 		     
-		     h5 [pcdata "Huge Box count, dark, recommend, trebuchet MS button"];
+		     h5 [pcdata "Dark, count, recommend, trebuchet MS button"];
 		     Facebook.button
-		       ~width:300
-		       ~height:400
 		       ~background:Facebook.Dark
 		       ~text:Facebook.Recommend
 		       ~layout_style:Facebook.Box_count
@@ -66,6 +66,43 @@ let _ =
 		 div ~a:[a_class ["span3"; "well"]]
 		   [
 		     h3 [pcdata "Twitter button example"];
+
+		     h5 [pcdata "Simple default button"];
+		     Twitter.button ();
+
+		     h5 [pcdata "No counter button with hashtag"];
+		     Twitter.button
+		       ~count_position:Twitter.None
+		       ~url:url
+		       ~twitter_account:twitter_account
+		       ~hashtags:["Ocsigen"]
+		       ();
+
+
+		     h5 [pcdata
+			    ("With a given text, related to some other " ^
+				"accounts, count button is displayed on top, " ^
+				"some hashtags provided, large button")];
+		     Twitter.button
+		       ~url:url
+		       ~twitter_account:twitter_account
+		       ~text:"You should try this powerful web framework!"
+		       ~related_twitter_accounts:
+		       [("OCamlPro", "develops tools for OCaml");
+			("db0company", "the author of this twitter button")]
+		       ~count_position:Twitter.Vertical
+		       ~hashtags:["OCaml"; "web"; "framework"]
+		       ();
+
+		     h5 [pcdata "Large buttons"];
+		     Twitter.button
+		       ~count_position:Twitter.None
+		       ~button_size:Twitter.Large
+		       ();
+		     Twitter.button
+		       ~count_position:Twitter.Horizontal
+		       ~button_size:Twitter.Large
+		       ();
 		   ];
 		 div ~a:[a_class ["span3"; "well"]]
 		   [
@@ -74,7 +111,7 @@ let _ =
 		 div ~a:[a_class ["span3"; "well"]]
 		   [
 		     h3 [pcdata "Social Bar example"];
-		     Socialbar.create url;
+		     Socialbar.create ~url:url ();
 
 		   ]
 	       ]

@@ -16,6 +16,7 @@ CLIENT_PACKAGES :=
 
 SERVER_FILES := 		\
 		facebook.eliom	\
+		twitter.eliom	\
 		socialbar.eliom	\
 		example.eliom	\
 				\
@@ -23,7 +24,6 @@ SERVER_FILES := 		\
 ## Source files for the client part
 
 CLIENT_FILES :=			\
-		example.eliom	\
 				\
 
 ## Required binaries
