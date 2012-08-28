@@ -41,7 +41,10 @@ let layout_min_width text = function
       | Recommend -> 265
       | Like      -> 225)
   | Button_count -> 90
-  | Box_count    -> 55
+  | Box_count    ->
+    (match text with
+      | Recommend -> 84
+      | Like      -> 55)
 
 let layout_min_height show_faces = function
   | Standard     ->
@@ -87,6 +90,9 @@ let font_str = function
 (* Button                                                                     *)
 (* ************************************************************************** *)
 
+(* Take the url and some optional parameters and return an iframe containing  *)
+(* the Facebook famous "Like" button                                          *)
+(* This function can raise Invalid_argument if width or height are too small  *)
 let button
   ?layout_style:(layout_style=Standard)
   ?width:(pre_width=0)
@@ -134,7 +140,8 @@ let button
       (text_str text,
       (background_str background,
       (font_str font,
-      height))))))))
+      height
+      ))))))))
 
     and style =
       "width:" ^ (width) ^ "px;" ^
