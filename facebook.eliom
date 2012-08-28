@@ -7,6 +7,7 @@
 
 open Eliom_content
 open Html5.D
+open Eliom_parameter
 
 (* ************************************************************************** *)
 (* Text of the button                                                         *)
@@ -76,10 +77,10 @@ type font =
 
 let font_str = function
   | Arial        -> "arial"
-  | LucidaGrande -> "lucida+grande"
-  | SegoeUI      -> "segoe+ui"
+  | LucidaGrande -> "lucida grande"
+  | SegoeUI      -> "segoe ui"
   | Tahoma       -> "tahoma"
-  | TrebuchetMS  -> "trebuchet+ms"
+  | TrebuchetMS  -> "trebuchet ms"
   | Verdana      -> "verdana"
 
 (* ************************************************************************** *)
@@ -102,32 +103,44 @@ let button
   let width = string_of_int
     (if pre_width > 0
      then
-	if pre_width < min_width
-	then raise (Invalid_argument "width")
-	else pre_width
+        if pre_width < min_width
+        then raise (Invalid_argument "width")
+        else pre_width
      else min_width)
 
   and height = string_of_int
     (if pre_height > 0
      then
-	if pre_height < min_height
-	then raise (Invalid_argument "height")
-	else pre_height
+        if pre_height < min_height
+        then raise (Invalid_argument "height")
+        else pre_height
      else min_height) in
 
-    let src = "//www.facebook.com/plugins/like.php" ^
-      "?href=" ^ (Ocsigen_lib.Url.encode url) ^
-      "&send=&layout=" ^ (layout_str layout_style) ^
-      "&width=" ^ width ^
-      "&show_faces=" ^ (string_of_bool show_faces) ^
-      "&action=" ^ (text_str text) ^
-      "&colorscheme=" ^ (background_str background) ^
-      "&font=" ^ (font_str font) ^
-      "&height=" ^ height
-    and style = "width:" ^ (width) ^ "px;height:" ^ height ^
-      "px;overflow:hidden;border:none;" in
+    let service =
+      (Eliom_service.external_service
+         ~prefix:"//www.facebook.com/"
+         ~path:["plugins"; "like.php"]
+         ~get_params:(string "href" ** string "send" ** string "layout"
+                      ** string "width" ** string "show_faces"
+                      ** string "action" ** string "colorscheme"
+                      ** string "font" ** string "height") ())
+
+    and parameters =
+      (Ocsigen_lib.Url.encode url,
+      (string_of_bool false,
+      (layout_str layout_style,
+      (width,
+      (string_of_bool show_faces,
+      (text_str text,
+      (background_str background,
+      (font_str font,
+      height))))))))
+
+    and style =
+      "width:" ^ (width) ^ "px;" ^
+        "height:" ^ height ^ "px;" ^
+        "overflow:hidden;" ^
+        "border:none;" in
 
     iframe
-      ~a:[a_src (Xml.uri_of_string src);
-	  a_style style]
-      [pcdata ""]
+      ~a:[a_src (make_uri service parameters); a_style style] [pcdata ""]
